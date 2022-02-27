@@ -10,6 +10,7 @@ import { doc, serverTimestamp, setDoc } from "firebase/firestore"
 import { toast } from "react-toastify"
 import { ReactComponent as ArrowRightIcon } from "../assets/svg/keyboardArrowRightIcon.svg"
 import visibilityIcon from "../assets/svg/visibilityIcon.svg"
+import OAuth from "../components/OAuth"
 
 export default function SignUp() {
   const [showPassword, setShowPassword] = useState(false)
@@ -109,7 +110,7 @@ export default function SignUp() {
             </div>
           </form>
 
-          {/* Google OAuth */}
+          <OAuth />
 
           <Link to="/sign-in" className="registerLink">
             Sign In Instead
