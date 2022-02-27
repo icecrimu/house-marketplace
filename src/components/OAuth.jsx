@@ -25,12 +25,13 @@ export default function OAuth() {
         await setDoc(doc(db, "users", user.uid), {
           name: user.displayName,
           email: user.email,
-          timestamp: serverTimestamp
+          timestamp: serverTimestamp()
         })
       }
       navigate("/")
-    } catch (error) {}
-    toast.error("Could not authorize with google")
+    } catch (error) {
+      toast.error("Could not authorize with google")
+    }
   }
 
   return (
