@@ -67,7 +67,29 @@ export default function CreateListing() {
     e.preventDefault()
   }
 
-  function handleMutate() {}
+  function handleMutate(e) {
+    let boolean = null
+
+    if (e.target.value === "true") {
+      boolean = true
+    }
+    if (e.target.value === "false") {
+      boolean = false
+    }
+
+    //Files
+    if (e.target.files) {
+      setFormData(prevState => ({ ...prevState, images: e.target.files }))
+    }
+
+    //Text/booleans/numbers
+    if (!e.target.files) {
+      setFormData(prevState => ({
+        ...prevState,
+        [e.target.id]: boolean ?? e.target.value
+      }))
+    }
+  }
 
   return (
     <div className="profile">
@@ -171,7 +193,7 @@ export default function CreateListing() {
           <label className="formLabel">Furnished</label>
           <div className="formButtons">
             <button
-              className={furnished ? "formButtonnActive" : "formButton"}
+              className={furnished ? "formButtonActive" : "formButton"}
               type="button"
               id="furnished"
               value={true}
@@ -183,7 +205,7 @@ export default function CreateListing() {
             <button
               className={
                 !furnished && furnished !== null
-                  ? "formButtonnActive"
+                  ? "formButtonActive"
                   : "formButton"
               }
               type="button"
@@ -191,7 +213,7 @@ export default function CreateListing() {
               value={false}
               onClick={handleMutate}
             >
-              Yes
+              No
             </button>
           </div>
 
