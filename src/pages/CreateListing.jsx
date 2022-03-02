@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react"
 import { getAuth, onAuthStateChanged } from "firebase/auth"
 import { useNavigate } from "react-router-dom"
 import Spinner from "../components/Spinner"
+import { toast } from "react-toastify"
 
 export default function CreateListing() {
   const [geolocationEnabled, setGeolocationEnabled] = useState(true)
@@ -63,8 +64,47 @@ export default function CreateListing() {
     return <Spinner />
   }
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault()
+
+    setLoading(true)
+
+    if (discountedPrice >= regularPrice) {
+      setLoading(false)
+      toast.error("Discounted price needs to be less than regular price")
+      return
+    }
+
+    if (images.length > 6) {
+      setLoading(false)
+      toast.error("Max 6 images")
+      return
+    }
+
+    let geolocation = {}
+    let location
+
+    if (geolocationEnabled) {
+      const response = await fetch(
+        `https://api.mapbox.com/geocoding/v5/mapbox.places/${address}.json?access_token=${process.env.REACT_APP_GEOCODE_API_KEY}`
+      )
+      const data = await response.json()
+      geolocation.lat = data.features[0]?.geometry.coordinates[0] ?? 0
+      geolocation.lng = data.features[0]?.geometry.coordinates[1] ?? 0
+      location =
+        data.features.length === 0 ? undefined : data.features[0].place_name
+
+      if (location === undefined || location.includes("undefined")) {
+        setLoading(false)
+        toast.error("Please enter a correct address")
+        return
+      }
+    } else {
+      geolocation.lat = latitude
+      geolocation.lng = longitude
+      location = address
+    }
+    setLoading(false)
   }
 
   function handleMutate(e) {
