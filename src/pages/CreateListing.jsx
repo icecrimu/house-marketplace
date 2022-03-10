@@ -14,6 +14,7 @@ import { toast } from "react-toastify"
 import { v4 as uuidv4 } from "uuid"
 
 export default function CreateListing() {
+  // eslint-disable-next-line
   const [geolocationEnabled, setGeolocationEnabled] = useState(true)
   const [loading, setLoading] = useState(false)
   const [formData, setFormData] = useState({
@@ -67,7 +68,7 @@ export default function CreateListing() {
     return () => {
       isMounted.current = false
     }
-  }, [isMounted])
+  }, [isMounted, auth, formData, navigate])
 
   if (loading) {
     return <Spinner />
@@ -136,6 +137,8 @@ export default function CreateListing() {
                 break
               case "running":
                 console.log("Upload is running")
+                break
+              default:
                 break
             }
           },

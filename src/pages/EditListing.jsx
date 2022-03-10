@@ -14,6 +14,7 @@ import { toast } from "react-toastify"
 import { v4 as uuidv4 } from "uuid"
 
 export default function EditListing() {
+  // eslint-disable-next-line
   const [geolocationEnabled, setGeolocationEnabled] = useState(true)
   const [loading, setLoading] = useState(false)
   const [listing, setListing] = useState(false)
@@ -70,7 +71,7 @@ export default function EditListing() {
     return () => {
       isMounted.current = false
     }
-  }, [isMounted])
+  }, [isMounted, auth, formData, navigate])
 
   //fetch listing to edit
   useEffect(() => {
@@ -97,7 +98,7 @@ export default function EditListing() {
       toast.error("You can not edit that listing")
       navigate("/")
     }
-  }, [])
+  }, [auth.currentUser.uid, listing, navigate])
 
   if (loading) {
     return <Spinner />
@@ -166,6 +167,8 @@ export default function EditListing() {
                 break
               case "running":
                 console.log("Upload is running")
+                break
+              default:
                 break
             }
           },
