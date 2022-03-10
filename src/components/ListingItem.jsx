@@ -49,7 +49,7 @@ export default function ListingItem({ listing, id, handleDelete }) {
         <DeleteIcon
           className="removeIcon"
           fill="rgb(231,76,60)"
-          onClick={handleDelete(id, listing.name)}
+          onClick={() => handleDelete(id, listing.name)}
         />
       )}
     </li>

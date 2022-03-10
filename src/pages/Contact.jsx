@@ -52,7 +52,7 @@ export default function Contact() {
                 id="message"
                 className="textarea"
                 value={message}
-                onChange={() => handleChange()}
+                onChange={handleChange}
               />
             </div>
 
