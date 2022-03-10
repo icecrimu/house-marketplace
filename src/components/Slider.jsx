@@ -39,6 +39,10 @@ export default function Slider() {
 
   if (loading) return <Spinner />
 
+  if (listing.length === 0) {
+    return <></>
+  }
+
   return (
     listing && (
       <>
