@@ -72,6 +72,17 @@ export default function Profile() {
     })
   }
 
+  async function handleDelete(listingId) {
+    if (window.confirm("Are you sure you want to delete ?")) {
+      await deleteDoc(doc(db, "listings", listingId))
+      const updatedListings = listings.filter(
+        listing => listing.id !== listingId
+      )
+      setListings(updatedListings)
+      toast.success("Successfully Deleted listing")
+    }
+  }
+
   async function handleSubmit() {
     try {
       if (auth.currentUser.displayName !== name) {
@@ -151,6 +162,7 @@ export default function Profile() {
                   key={listing.id}
                   listing={listing.data}
                   id={listing.id}
+                  handleDelete={() => handleDelete(listing.id)}
                 />
               ))}
             </ul>
