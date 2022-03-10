@@ -83,6 +83,10 @@ export default function Profile() {
     }
   }
 
+  function handleEdit(listingId) {
+    navigate(`/edit-listing/${listingId}`)
+  }
+
   async function handleSubmit() {
     try {
       if (auth.currentUser.displayName !== name) {
@@ -163,6 +167,7 @@ export default function Profile() {
                   listing={listing.data}
                   id={listing.id}
                   handleDelete={() => handleDelete(listing.id)}
+                  handleEdit={() => handleEdit(listing.id)}
                 />
               ))}
             </ul>

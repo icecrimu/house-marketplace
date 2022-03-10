@@ -6,16 +6,17 @@ import {
   uploadBytesResumable,
   getDownloadURL
 } from "firebase/storage"
-import { addDoc, collection, serverTimestamp } from "firebase/firestore"
+import { doc, updateDoc, getDoc, serverTimestamp } from "firebase/firestore"
 import { db } from "../firebase.config"
-import { useNavigate } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 import Spinner from "../components/Spinner"
 import { toast } from "react-toastify"
 import { v4 as uuidv4 } from "uuid"
 
-export default function CreateListing() {
+export default function EditListing() {
   const [geolocationEnabled, setGeolocationEnabled] = useState(true)
   const [loading, setLoading] = useState(false)
+  const [listing, setListing] = useState(false)
   const [formData, setFormData] = useState({
     type: "rent",
     name: "",
@@ -51,8 +52,10 @@ export default function CreateListing() {
   const auth = getAuth()
 
   const navigate = useNavigate()
+  const params = useParams()
   const isMounted = useRef(true)
 
+  // Sets userRef to logged in user
   useEffect(() => {
     if (isMounted) {
       onAuthStateChanged(auth, user => {
@@ -68,6 +71,33 @@ export default function CreateListing() {
       isMounted.current = false
     }
   }, [isMounted])
+
+  //fetch listing to edit
+  useEffect(() => {
+    setLoading(true)
+
+    async function fetchListing() {
+      const docRef = doc(db, "listings", params.listingId)
+      const docSnap = await getDoc(docRef)
+      if (docSnap.exists()) {
+        setListing(docSnap.data())
+        setFormData({ ...docSnap.data(), address: docSnap.data().location })
+        setLoading(false)
+      } else {
+        navigate("/")
+        toast.error("Listing does not exist")
+      }
+    }
+    fetchListing()
+  }, [params.listingId, navigate])
+
+  // Redirect if listing is not user's
+  useEffect(() => {
+    if (listing && listing.userRef !== auth.currentUser.uid) {
+      toast.error("You can not edit that listing")
+      navigate("/")
+    }
+  }, [])
 
   if (loading) {
     return <Spinner />
@@ -172,7 +202,11 @@ export default function CreateListing() {
     delete formDataCopy.address
     !formDataCopy.offer && delete formDataCopy.discountedPrice
 
-    const docRef = await addDoc(collection(db, "listings"), formDataCopy)
+    const docRef = doc(db, "listings", params.listingId)
+
+    // Update listing
+    await updateDoc(docRef, formDataCopy)
+
     setLoading(false)
     toast.success("Listing saved")
 
@@ -208,7 +242,7 @@ export default function CreateListing() {
   return (
     <div className="profile">
       <header>
-        <p className="pageHeader">Create a Listing</p>
+        <p className="pageHeader">Edit a Listing</p>
       </header>
 
       <main>
@@ -437,7 +471,7 @@ export default function CreateListing() {
             required
           />
           <button type="submit" className="primaryButton createListingButton">
-            Create Listing
+            Edit Listing
           </button>
         </form>
       </main>
